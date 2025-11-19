@@ -14,15 +14,12 @@ def connect():
     return cursor
 
 def showtable(entity):
-    cursor = connect()
+    if not 'cursor' in locals() or globals(): # may not work/needed
+        cursor = connect()
     cursor.execute(f"SELECT * FROM {entity}")
 
     mytable = from_db_cursor(cursor)
     print(mytable)
-
-    # records= cursor.fetchall()
-    # for row in records:
-    #     print(row)
 
 def regis():
     while True:
@@ -94,6 +91,48 @@ def ShowAkunAll():
     cursor= connect()
     cursor.execute("SELECT * FROM pengguna")
 
+def ChangeAkunAll():
+    cursor = connect()
+    showtable("pengguna")
+    id_= input("Masukkan id yg ingin diubah")
+    cursor.execute(f"Select * from pengguna where id_pengguna = {id_}")
+    records = cursor.fetchone()
+    print(records)
+    query = "Update pengguna Set "
+    nama = input("Masukkan nama baru, kosongkan jika sama ")
+    count = 0
+    if not nama == "":
+        query = query + f" nama_lengkap = '{nama}'"
+        count += 1
+    username = input ("Masukkan username baru, kosongkan jika sama ")
+    if not username == "":
+        if not count == 0:
+            query = query + ","
+        query = query + f" username = '{username}'"
+        count += 1
+    password = input("Masukkan password baru, kosongkan jika sama ")
+    if not password == "":
+        if not count == 0:
+            query = query + ","
+        query = query + f" passwords = '{password}'"
+        count += 1
+    no = input("Masukkan nomer telepon baru, kosongkan jika sama ")
+    if not no == "":
+        if not count == 0:
+            query = query + ","
+        count += 1
+        query = query + f" no_telpon = '{no}'"
+    email = input("Masukkan email baru, kosongkan jika sama ")
+    if not email == "":
+        if not count == 0:
+            query = query + ","
+        count += 1
+        query = query + f" email = '{email}'"
+    query = query + f" WHERE id_pengguna = {records[0]}"
+    cursor.execute(query)
+    cursor.connection.commit()
+    print("Data berhasil diubah...")
+
 
 ################################################################
 
@@ -146,7 +185,16 @@ try:
             temp = inputint("Masukkan angka ")
             if temp == 1:
                 ShowAkunAll()
+                temp= inputint("Enter jika ingin keluar,isi dengan apa saja jika ingin mengedit")
+                if temp == "\n":
+                    pass
+                else :
+                    ChangeAkunAll()
 
     
 except :
     print('Error, Silahkan kontak admin(Error 001)')
+
+# showtable("pengguna")
+
+# ChangeAkunAll()
