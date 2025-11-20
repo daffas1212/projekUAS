@@ -3,6 +3,8 @@ from psycopg2 import Error, sql
 from prettytable import from_db_cursor
 from macro import *
 
+### Note : Sisa fitur sedang menunggu konfirmasi benar atau tidak. Daripada kerja dua kali
+
 def connect():
     connection = psycopg2.connect(
     user="postgres",
@@ -228,51 +230,68 @@ while True:
     elif pilihanmenu == 0:
         exit()
 
-try:
-    if login_status == 1 and data_user[1] is False: # Menu penjual
-        clear()
-        MenuUtama()
-        temp = inputint("Masukkan menu yang diinginkan ")
-        if temp == 1:
+while login_status == 1:
+    try:
+        if data_user[1] is False: # Menu penjual
             clear()
-            ShowAkun()
-            temp = input("Tekan enter untuk keluar atau masukkan sembarang huruf untuk mengedit ")
-            if temp != "":
-                ChangeAkunSelf(data_user[0])
-        elif temp == 2:
-            pass
-        elif temp == 3 :
-            pass
-        elif temp == 4 :
-            exit
-
-    elif login_status == 1 and data_user[1] is True: # Menu admin
-        clear()
-        MenuUtamaAdmin()
-        temp =inputint("Masukkan angka ")
-        if temp == 1:
-            print("1. Data user \n" 
-            "2. Data admin")
-            temp = inputint("Masukkan angka ")
+            MenuUtama()
+            temp = inputint("Masukkan menu yang diinginkan ")
             if temp == 1:
-                ShowAkunAll()
-                temp= input("Enter jika ingin keluar,isi dengan angka apa saja jika ingin mengedit ")
-                clear()
-                if temp == "":
-                    pass
-                else :
-                    ChangeAkunAll()
-            elif temp == 2:
                 clear()
                 ShowAkun()
                 temp = input("Tekan enter untuk keluar atau masukkan sembarang huruf untuk mengedit ")
                 if temp != "":
                     ChangeAkunSelf(data_user[0])
-    
-except :
-    # print('Error, Silahkan kontak admin(Error 001)')
-    print(Error)
-    print("Error 123")
+            elif temp == 2:
+                pass
+            elif temp == 3 :
+                pass
+            elif temp == 4 :
+                clear()
+                temp = input("Apakah kamu yakin ingin keluar?\nketik y jika yakin ingin keluar ")
+                if temp == "y":
+                    login_status = 0
+
+        elif data_user[1] is True: # Menu admin
+            clear()
+            MenuUtamaAdmin()
+            temp =inputint("Masukkan angka ")
+            if temp == 1:
+                print("1. Data user\n" 
+                "2. Data admin")
+                temp = inputint("Masukkan angka ")
+                if temp == 1: #Data all
+                    ShowAkunAll()
+                    temp= input("Tekan enter untuk keluar atau isi dengan sembarang huruf untuk mengedit ")
+                    clear()
+                    if temp == "":
+                        pass
+                    else :
+                        ChangeAkunAll()
+                elif temp == 2: #Data sendiri
+                    clear()
+                    ShowAkun()
+                    temp = input("Tekan enter untuk keluar atau isi dengan sembarang huruf untuk mengedit ")
+                    if temp != "":
+                        ChangeAkunSelf(data_user[0])
+            elif temp == 2:
+                pass
+            elif temp == 3 :
+                pass
+            elif temp == 4 :
+                pass
+            elif temp == 5 :
+                pass
+            elif temp == 6 :
+                clear()
+                temp = input("Apakah kamu yakin ingin keluar?\nketik y jika yakin ingin keluar ")
+                if temp == "y":
+                    login_status = 0
+        
+    except :
+        # print('Error, Silahkan kontak admin(Error 001)')
+        print(Error)
+        print("Error 123")
 
 
 # if connection:
