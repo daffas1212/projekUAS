@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2 import Error, sql
-from prettytable import from_db_cursor
+from prettytable import from_db_cursor, PrettyTable
 from macro import *
 
 ### Note : Sisa fitur sedang menunggu konfirmasi benar atau tidak. Daripada kerja dua kali
@@ -21,16 +21,30 @@ def showtable(entity):
     query = querydefault
     orderlist = []
     orderlistasc = []
+    offset = 0
+    limit = f" limit 10 "
     while True:
-        print("query= ", query)
+        # print("query= ", query)
         if not 'cursor' in locals() and globals(): # may not work/needed
             cursor = connect()
+        cursor.execute("Select count(*) from pengguna")
+        jumlah = cursor.fetchone()
         cursor.execute(query)
-
-        mytable = from_db_cursor(cursor)
-        print(mytable)
+        for x in range((jumlah[0]//5)+1):
+            print("Halaman ke ",x+1)
+            record = cursor.fetchmany(5)
+            columns = [x[0] for x in cursor.description]
+            mytable = PrettyTable(columns)
+            for y in record:
+                mytable.add_row(y)
+            print(mytable)
+            temp = input("Masukkan opsi (join, where, group, having, order, enter untuk next page) ")
+            if temp != "":
+                break
+            else:
+                pass
+            clear()
         query = querydefault
-        temp = input("Masukkan opsi (join, where, group, having, order)")
         if temp == "":
             break
         elif temp == "join":
@@ -56,6 +70,8 @@ def showtable(entity):
                     query = query + " asc"
                 else:
                     query = query + " desc"
+        else:
+            break
 
 
 
@@ -331,11 +347,11 @@ while login_status == 1:
         print("Error 123")
 
 
-# if connection:
-#     cursor.close()
-#     connection.close()
+# # if connection:
+# #     cursor.close()
+# #     connection.close()
 
 
 
-# showtable("pengguna")
-# ChangeAkunAll()
+showtable("pengguna")
+# # ChangeAkunAll()
